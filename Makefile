@@ -10,6 +10,11 @@ start: mdp start.c
 utilities: mdp utilities.c utilities.h
 	${CC} ${CFLAGS} -c utilities.c
 
+transition: mdp
+	${CC} ${CFLAGS} -o transition transition.c mdp.o
+
+
+
 # NB: value and policy depend on utilities, but the dependency is removed so 
 # the calc_eu and calc_meu stubs are not inadvertently compiled
 

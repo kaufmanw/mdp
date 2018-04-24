@@ -18,14 +18,17 @@
 ////////////////////////////////////////////////////////////////////////////////
 int main(int argc, char* argv[])
 {
-  if (argc != 2)
+  if (argc != 4)
   {
-    fprintf(stderr,"Usage: %s mdpfile\n",argv[0]);
+    fprintf(stderr,"Usage: %s mdpfile state action\n",argv[0]);
     exit(EXIT_FAILURE);
   }
 
   // Pointer for the MDP struct
   mdp *p_mdp;
+
+  unsigned int state = (unsigned int)strtol(argv[2], NULL, 10);
+  unsigned int action = (unsigned int)strtol(argv[3], NULL, 10);
 
   // Read the MDP file
   p_mdp = mdp_read(argv[1]);
@@ -39,17 +42,10 @@ int main(int argc, char* argv[])
   printf("Number of states: %u\n", p_mdp->numStates);
   printf("Number of actions: %u\n", p_mdp->numActions);
 
-  printf("Available actions\n");
-  
-  unsigned int state; // Loop variable over states
+  printf("Available actions\n");  
 
-  for (state=0 ; state < p_mdp->numStates ; state++)
-  {
-    printf("State %u: [%u]", state, p_mdp->numAvailableActions[state]);
-	for (unsigned int action = 0; action < p_mdp->numAvailableActions[state]; action++)
-	  printf("%u ", action);
-	printf("\n");
-  }
+  for (unsigned int t = 0; t < p_mdp->numStates ; t++)
+	printf("%u  %.2lf\n", t, p_mdp->transitionProb[t][state][action]);
 
   // Clean up
   mdp_free(p_mdp);
