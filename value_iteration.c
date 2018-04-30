@@ -104,7 +104,7 @@ process_args  (int argc, char * argv[], double * gamma, double * epsilon,
   }
 } // process_args
 
-unsigned int max(unsigned int x, unsigned int y) {
+double max(double x, double y) {
   if (x > y) 
 	return x;
   return y;
@@ -112,8 +112,10 @@ unsigned int max(unsigned int x, unsigned int y) {
 
 void value_iteration ( const mdp * p_mdp, double epsilon, double gamma,
 	double * utilities) {
-  unsigned int * action = 0;
-  double * meu = 0;
+  double meuval = 0;
+  double * meu = &meuval;
+  unsigned int actionval = 0;
+  unsigned int * action = &actionval;
   unsigned int numStates = p_mdp->numStates;
   unsigned int arrSize = sizeof(double) * numStates;
   for (int state = 0; state < numStates; state++) {
@@ -127,13 +129,13 @@ void value_iteration ( const mdp * p_mdp, double epsilon, double gamma,
   double * utilitiesprime = malloc(arrSize);
   *memcpy(utilitiesprime,utilities,arrSize);
   double delta = 2 * epsilon; // make sure we enter the loop
-  while (delta > epsilon * (1 - gamma)/gamma) {
+  while (delta > (epsilon * (1 - gamma)/gamma)) {
 	delta = 0;
 	*memcpy(utilities,utilitiesprime,arrSize);
 	for (int state = 0; state < numStates; state++) {
 	  if (!p_mdp->terminal[state]) {
 		calc_meu(p_mdp, state, utilities, meu, action); 
-		utilitiesprime[state] = p_mdp->rewards[state] + gamma * *meu;
+		utilitiesprime[state] = p_mdp->rewards[state] + gamma * meuval;
 		delta = max(fabs(utilities[state] - utilitiesprime[state]), delta);
 	  }
 	}
