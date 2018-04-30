@@ -10,15 +10,12 @@
 /* Process command-line arguments, verifying usage */
 void
 process_args (int argc, char* argv[], double * gamma, double * epsilon,
-              mdp ** p_mdp );
+	mdp ** p_mdp );
 
 
-void
+  void
 value_iteration ( const mdp * p_mdp, double epsilon, double gamma,
-                  double * utilities)
-{
-  // Run value iteration!
-} // value_iteration
+	double * utilities) ;
 
 
 /*
@@ -29,7 +26,7 @@ value_iteration ( const mdp * p_mdp, double epsilon, double gamma,
  *
  * Author: Jerod Weinman
  */
-int
+  int
 main (int argc, char* argv[])
 {
   // Read and process configurations
@@ -43,10 +40,10 @@ main (int argc, char* argv[])
 
   if (NULL == utilities) // Verify we have memory for utility array
   {
-    fprintf(stderr,
-	    "%s: Unable to allocate utilities (%s)",
-	    argv[0], strerror (errno));
-    exit (EXIT_FAILURE);
+	fprintf(stderr,
+		"%s: Unable to allocate utilities (%s)",
+		argv[0], strerror (errno));
+	exit (EXIT_FAILURE);
   }
 
   // Run value iteration!
@@ -55,12 +52,12 @@ main (int argc, char* argv[])
   // Print utilities
   unsigned int state;
   for ( state=0 ; state < p_mdp->numStates ; state++)
-    if (p_mdp->numAvailableActions[state] > 0 || p_mdp->terminal[state])
-      printf ("%1.3f\n", utilities[state]);
-    else
-      printf("X\n");
+	if (p_mdp->numAvailableActions[state] > 0 || p_mdp->terminal[state])
+	  printf ("%1.3f\n", utilities[state]);
+	else
+	  printf("X\n");
 
-  
+
   // Clean up
   free (utilities);
   mdp_free (p_mdp);
@@ -68,43 +65,80 @@ main (int argc, char* argv[])
 
 
 /* Process command-line arguments, verifying usage */
-void
+  void
 process_args  (int argc, char * argv[], double * gamma, double * epsilon,
-               mdp ** p_mdp )
+	mdp ** p_mdp )
 { 
   if (argc != 4)
   {
-    fprintf (stderr,"Usage: %s gamma epsilon mdpfile\n",argv[0]);
-    exit (EXIT_FAILURE);
+	fprintf (stderr,"Usage: %s gamma epsilon mdpfile\n",argv[0]);
+	exit (EXIT_FAILURE);
   }
 
   char * endptr; // String End Location for number parsing
-  
+
   *gamma = strtod(argv[1], &endptr); // Read gamma, the discount factor
-  
+
   if ( (endptr - argv[1]) < strlen(argv[1]) ) 
   { // Error: The entire argument was not consumed by the conversion
-    fprintf (stderr, "%s: Illegal non-numeric value in argument gamma=%s\n",
-             argv[0], argv[1]);
-    exit (EXIT_FAILURE);
+	fprintf (stderr, "%s: Illegal non-numeric value in argument gamma=%s\n",
+		argv[0], argv[1]);
+	exit (EXIT_FAILURE);
   }
-  
+
   // Read epsilon, maximum allowable state utility error
   *epsilon = strtod(argv[2], &endptr); 
-  
+
   if ( (endptr - argv[2]) < strlen(argv[2]) )
   { // Error: The entire argument was not consumed by the conversion
-    fprintf (stderr, "%s: Illegal non-numeric value in argument epsilon=%s\n",
-             argv[0], argv[2]);
-    exit (EXIT_FAILURE);
+	fprintf (stderr, "%s: Illegal non-numeric value in argument epsilon=%s\n",
+		argv[0], argv[2]);
+	exit (EXIT_FAILURE);
   }
-  
+
   *p_mdp = mdp_read (argv[3]); // Read MDP file (exits with message if error)
 
   if (NULL == *p_mdp)
   { // mdp_read prints a message
-      exit (EXIT_FAILURE);
+	exit (EXIT_FAILURE);
   }
 } // process_args
+
+unsigned int max(unsigned int x, unsigned int y) {
+  if (x > y) 
+	return x;
+  return y;
+}
+
+void value_iteration ( const mdp * p_mdp, double epsilon, double gamma,
+	double * utilities) {
+  unsigned int * action = 0;
+  double * meu = 0;
+  unsigned int numStates = p_mdp->numStates;
+  unsigned int arrSize = sizeof(double) * numStates;
+  for (int state = 0; state < numStates; state++) {
+	if (p_mdp->terminal[state]) {
+	  utilities[state] = p_mdp->rewards[state];
+	} else 
+	  utilities[state] = 0;
+  } // initialize all utilities as 0, except for terminal states,
+  // who we will initialize as their reward value here to avoid
+  // having to ever touch it again  
+  double * utilitiesprime = malloc(arrSize);
+  *memcpy(utilitiesprime,utilities,arrSize);
+  double delta = 2 * epsilon; // make sure we enter the loop
+  while (delta > epsilon * (1 - gamma)/gamma) {
+	delta = 0;
+	*memcpy(utilities,utilitiesprime,arrSize);
+	for (int state = 0; state < numStates; state++) {
+	  if (!p_mdp->terminal[state]) {
+		calc_meu(p_mdp, state, utilities, meu, action); 
+		utilitiesprime[state] = p_mdp->rewards[state] + gamma * *meu;
+		delta = max(fabs(utilities[state] - utilitiesprime[state]), delta);
+	  }
+	}
+  } *memcpy(utilities,utilitiesprime,arrSize);
+  return ;
+}
 
 
