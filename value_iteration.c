@@ -138,6 +138,7 @@ void value_iteration ( const mdp * p_mdp, double epsilon, double gamma,
 	  }
 	}
   } *memcpy(utilities,utilitiesprime,arrSize);
+  free(utilitiesprime);
   return ;
 }
 
