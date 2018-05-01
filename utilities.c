@@ -8,10 +8,13 @@ calc_eu ( const mdp *  p_mdp, unsigned int state, const double * utilities,
           const unsigned int action)
 {
   double eu = 0;   // Expected utility
+  unsigned int numStates = p_mdp->numStates;
+
+  for (int newstate = 0; newstate < numStates; newstate++) {
+	eu += p_mdp->transitionProb[newstate][state][action] * utilities[newstate];
+  }
 
   // Calculate expected utility: sum_{s'} P(s'|s,a)*U(s')
-  fprintf (stderr,
-           "WARNING! calc_eu not implemented. Results will be invalid!\n");
   
   return eu;
 }
