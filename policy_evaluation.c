@@ -65,7 +65,7 @@ void policy_evaluation( const unsigned int* policy, const mdp* p_mdp,
 	  if(!p_mdp->terminal[state]) {
 		utilitiesprime[state] = 
 		  p_mdp->rewards[state] + 
-		  calc_eu(p_mdp, state, utilities, policy[state]);
+		  gamma * calc_eu(p_mdp, state, utilities, policy[state]);
 		delta = max(fabs(utilities[state] - utilitiesprime[state]), delta);
 	  }
 	}
