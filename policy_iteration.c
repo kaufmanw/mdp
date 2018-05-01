@@ -44,7 +44,10 @@ process_args ( int argc, char * argv[], double * gamma, double * epsilon,
 void policy_iteration ( const mdp* p_mdp, double epsilon, double gamma,
 		      unsigned int *policy)
 {
-  // Implement Policy Iteration here
+  unsigned int numStates = p_mdp->numStates;
+  unsigned int arrSize = sizeof(double) * numStates;
+  double * utilities = malloc(arrSize);
+  
 } // policy_iteration
 
 

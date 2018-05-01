@@ -7,6 +7,12 @@
 #include "utilities.h"
 #include "mdp.h"
 
+double max(double x, double y) {
+  if (x > y) 
+	return x;
+  return y;
+}
+
 /*  Procedure
  *    policy_evaluation
  *
@@ -37,8 +43,33 @@
  *    so that no update is larger than epsilon
  */
 void policy_evaluation( const unsigned int* policy, const mdp* p_mdp,
-			double epsilon, double gamma,
-			double* utilities)
+	double epsilon, double gamma,
+	double* utilities)
 {
-
+  unsigned int numStates = p_mdp->numStates;
+  unsigned int arrSize = sizeof(double) * numStates;
+  for (int state = 0; state < numStates; state++) {
+	if (p_mdp->terminal[state]) {
+	  utilities[state] = p_mdp->rewards[state];
+	} else
+	  utilities[state] = 0;
+  } // initializes all utilities as 0, except for terminal states,
+  // who we will initialize as their reward value here to avoid
+  // having to ever touch them again
+  double * utilitiesprime = malloc(arrSize);
+  *memcpy(utilitiesprime,utilities,arrSize);
+  double delta = epsilon + 1;
+  while (delta > epsilon) {
+	delta = 0;
+	for (int state = 0; state < numStates; state++) {
+	  if(!p_mdp->terminal[state]) {
+		utilitiesprime[state] = 
+		  p_mdp->rewards[state] + 
+		  calc_eu(p_mdp, state, utilities, policy[state]);
+		delta = max(fabs(utilities[state] - utilitiesprime[state]), delta);
+	  }
+	}
+	*memcpy(utilities,utilitiesprime,arrSize);
+  } free(utilitiesprime);
+  return ;
 }
