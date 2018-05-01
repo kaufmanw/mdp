@@ -11,7 +11,7 @@
 /* Process command-line arguments, verifying usage */
 void
 process_args ( int argc, char * argv[], double * gamma, double * epsilon,
-               mdp ** p_mdp );
+	mdp ** p_mdp );
 
 /*  Procedure
  *    policy_iteration
@@ -42,14 +42,34 @@ process_args ( int argc, char * argv[], double * gamma, double * epsilon,
  *       and policy[s] is an entry in p_mdp->actions[s]
  */			
 void policy_iteration ( const mdp* p_mdp, double epsilon, double gamma,
-		      unsigned int *policy)
+	unsigned int *policy)
 {
+  int unchanged = 0;
   unsigned int numStates = p_mdp->numStates;
   unsigned int arrSize = sizeof(double) * numStates;
+  double meuval = 0;
+  double * meu = &meuval;
+  unsigned int actionval = 0;
+  unsigned int * action = &actionval;
   double * utilities = malloc(arrSize);
-  
-} // policy_iteration
-
+  for (int state = 0; state < numStates; state++) {
+	utilities[state] = p_mdp->rewards[state];
+  }
+  while (unchanged == 0) {
+	unchanged = 1;
+	policy_evaluation(policy, p_mdp, epsilon, gamma, utilities);
+	for (int state = 0; state < numStates; state++) {
+	  if (!p_mdp->terminal[state]) {
+		calc_meu(p_mdp, state, utilities, meu, action);
+		if (actionval != policy[state]) {
+		  policy[state] = actionval;
+		  unchanged = 0;
+		}
+	  }
+	}
+  } free(utilities);
+  return ;
+}
 
 /*  Procedure
  *    randomize_policy
@@ -81,11 +101,11 @@ void randomize_policy( const mdp * p_mdp, unsigned int * policy)
 
   for ( state=0 ; state < p_mdp->numStates ; state++)
   {
-    if (p_mdp->numAvailableActions[state] > 0)
-    {
-      action = (unsigned int)(random() % (p_mdp->numAvailableActions[state]));
-      policy[state] = p_mdp->actions[state][action];
-    }
+	if (p_mdp->numAvailableActions[state] > 0)
+	{
+	  action = (unsigned int)(random() % (p_mdp->numAvailableActions[state]));
+	  policy[state] = p_mdp->actions[state][action];
+	}
   }
 
 }
@@ -103,7 +123,7 @@ int main(int argc, char* argv[])
   mdp *p_mdp;
 
   process_args(argc, argv, &gamma, &epsilon, &p_mdp);
-  
+
   // Allocate policy array
   unsigned int * policy;
 
@@ -111,11 +131,11 @@ int main(int argc, char* argv[])
 
   if (NULL == policy)
   {
-    fprintf (stderr,
-             "%s: Unable to allocate policy (%s)",
-             argv[0],
-             strerror (errno));
-    exit (EXIT_FAILURE);
+	fprintf (stderr,
+		"%s: Unable to allocate policy (%s)",
+		argv[0],
+		strerror (errno));
+	exit (EXIT_FAILURE);
   }
 
   // Initialize random policy
@@ -127,10 +147,10 @@ int main(int argc, char* argv[])
   // Print policies
   unsigned int state;
   for ( state=0 ; state < p_mdp->numStates ; state++)
-    if (p_mdp->numAvailableActions[state])
-      printf ("%u\n",policy[state]);
-    else
-      printf ("0\n");
+	if (p_mdp->numAvailableActions[state])
+	  printf ("%u\n",policy[state]);
+	else
+	  printf ("0\n");
 
   // Clean up
   free (policy);
@@ -138,14 +158,14 @@ int main(int argc, char* argv[])
 
 } // main
 
-void
+  void
 process_args ( int argc, char * argv[], double * gamma, double * epsilon,
-               mdp ** p_mdp )
+	mdp ** p_mdp )
 {
   if (argc != 4)
   {
-    fprintf (stderr,"Usage: %s gamma epsilon mdpfile\n",argv[0]);
-    exit (EXIT_FAILURE);
+	fprintf (stderr,"Usage: %s gamma epsilon mdpfile\n",argv[0]);
+	exit (EXIT_FAILURE);
   }
 
   char * endptr; // String End Location for number parsing
@@ -155,9 +175,9 @@ process_args ( int argc, char * argv[], double * gamma, double * epsilon,
 
   if ( (endptr - argv[1])/sizeof(char) < strlen(argv[1]) )
   {
-    fprintf (stderr, "%s: Illegal non-numeric value in argument gamma=%s\n",
-             argv[0], argv[1]);
-    exit (EXIT_FAILURE);
+	fprintf (stderr, "%s: Illegal non-numeric value in argument gamma=%s\n",
+		argv[0], argv[1]);
+	exit (EXIT_FAILURE);
   }
 
   // Read epsilon, maximum allowable state utility error, as a double
@@ -165,9 +185,9 @@ process_args ( int argc, char * argv[], double * gamma, double * epsilon,
 
   if ( (endptr - argv[2])/sizeof(char) < strlen(argv[2]) )
   {
-    fprintf (stderr, "%s: Illegal non-numeric value in argument epsilon=%s\n",
-             argv[0], argv[2]);
-    exit (EXIT_FAILURE);
+	fprintf (stderr, "%s: Illegal non-numeric value in argument epsilon=%s\n",
+		argv[0], argv[2]);
+	exit (EXIT_FAILURE);
   }
 
   // Read the MDP file (exits with message if error)
@@ -175,6 +195,6 @@ process_args ( int argc, char * argv[], double * gamma, double * epsilon,
 
   if (NULL == p_mdp)
   { // mdp_read prints a message
-    exit (EXIT_FAILURE);
+	exit (EXIT_FAILURE);
   }
 } // process_args
