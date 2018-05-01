@@ -128,7 +128,7 @@ void value_iteration ( const mdp * p_mdp, double epsilon, double gamma,
   // having to ever touch it again  
   double * utilitiesprime = malloc(arrSize);
   *memcpy(utilitiesprime,utilities,arrSize);
-  double delta = 2 * epsilon; // make sure we enter the loop
+  double delta = epsilon * (1 - gamma)/gamma + 1; // make sure we enter the loop
   while (delta > (epsilon * (1 - gamma)/gamma)) {
 	delta = 0;
 	*memcpy(utilities,utilitiesprime,arrSize);

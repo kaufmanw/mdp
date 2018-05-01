@@ -61,9 +61,10 @@ void policy_evaluation( const unsigned int* policy, const mdp* p_mdp,
   double delta = epsilon + 1;
   while (delta > epsilon) {
 	delta = 0;
-	printf("%lf\n", utilities[0]);
-	printf("%lf\n", utilities[1]);
-	printf("%lf\n", utilities[4]);
+	for (int i = 0; i < numStates; i++) {
+	printf("%lf\n", utilities[i]);
+	}
+	printf("\n");
 	for (int state = 0; state < numStates; state++) {
 	  if(!p_mdp->terminal[state]) {
 		utilitiesprime[state] = 
