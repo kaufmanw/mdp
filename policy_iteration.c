@@ -59,7 +59,6 @@ void policy_iteration ( const mdp* p_mdp, double epsilon, double gamma,
 	unchanged = 1;
 	policy_evaluation(policy, p_mdp, epsilon, gamma, utilities);
 	for (int state = 0; state < numStates; state++) {
-	  printf("%d: %lf\n", state, utilities[state]);
 	  if (!p_mdp->terminal[state]) {
 		calc_meu(p_mdp, state, utilities, meu, action);
 		if (actionval != policy[state]) {
@@ -96,7 +95,7 @@ void policy_iteration ( const mdp* p_mdp, double epsilon, double gamma,
  */
 void randomize_policy( const mdp * p_mdp, unsigned int * policy)
 {
-  srandom(42);
+  srandom(52);
   unsigned int state;
   unsigned int action;
 
