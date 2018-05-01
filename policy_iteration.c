@@ -52,13 +52,11 @@ void policy_iteration ( const mdp* p_mdp, double epsilon, double gamma,
   unsigned int actionval = 0;
   unsigned int * action = &actionval;
   double * utilities = malloc(arrSize);
-  int i = 0;
   for (int state = 0; state < numStates; state++) {
 	utilities[state] = p_mdp->rewards[state];
   }
   while (unchanged == 0) {
 	unchanged = 1;
-	printf("%d\n", i++);
 	policy_evaluation(policy, p_mdp, epsilon, gamma, utilities);
 	for (int state = 0; state < numStates; state++) {
 	  printf("%d: %lf\n", state, utilities[state]);
