@@ -28,7 +28,7 @@ calc_meu ( const mdp * p_mdp, unsigned int state, const double * utilities,
   double eu = calc_eu(p_mdp, state, utilities, *action);
   *meu = eu;
   for (int i = 1; i < p_mdp->numAvailableActions[state]; i++) {
-	eu = calc_eu(p_mdp, state, utilities, *action);
+	eu = calc_eu(p_mdp, state, utilities, i);
 	if (eu > *meu) {
 	  *action = i;
 	  *meu = eu;
