@@ -1,0 +1,96 @@
+Script started on Wed 02 May 2018 01:33:14 AM CDT
+turing$ make value
+clang -Wall -g -std=gnu99  -c mdp.c
+clang -Wall -g -std=gnu99  -o  value_iteration value_iteration.c mdp.o utilities.o
+[1mvalue_iteration.c:134:2: [0m[0;1;35mwarning: [0m[1mexpression result unused [-Wunused-value][0m
+        *memcpy(utilities,utilitiesprime,arrSize);
+[0;1;32m        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[0m[1mvalue_iteration.c:130:3: [0m[0;1;35mwarning: [0m[1mexpression result unused [-Wunused-value][0m
+  *memcpy(utilitiesprime,utilities,arrSize);
+[0;1;32m  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[0m[1mvalue_iteration.c:142:5: [0m[0;1;35mwarning: [0m[1mexpression result unused [-Wunused-value][0m
+  } *memcpy(utilities,utilitiesprime,arrSize);
+[0;1;32m    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[0m3 warnings generated.
+turing$ ./value_iteration .99 .01 4x3.mdp 
+0.776
+0.717
+0.651
+0.844
+X
+0.593
+0.905
+0.641
+0.560
+1.000
+-1.000
+0.338
+turing$ ./value_iteration .99 .01 4x3.mdp [1P[1P[1P[1@1[1@6[6@x4.mdp[C[C[C[C[1P [1P [1P [1P 
+-0.328
+X
+X
+-1.000
+-0.281
+X
+-0.207
+-0.336
+-0.234
+-0.186
+-0.143
+X
+-0.196
+-0.143
+-0.089
+-0.033
+X
+X
+X
+0.024
+0.238
+0.185
+0.133
+0.075
+0.298
+X
+X
+X
+0.352
+X
+X
+-1.000
+0.407
+0.477
+0.533
+0.498
+0.352
+X
+0.602
+0.551
+X
+0.608
+0.666
+0.602
+-1.000
+X
+0.741
+X
+0.930
+0.869
+0.801
+0.754
+1.000
+X
+X
+0.808
+X
+X
+X
+0.869
+-3.990
+X
+1.000
+0.930
+turing$ exit
+exit
+
+Script done on Wed 02 May 2018 01:34:01 AM CDT
