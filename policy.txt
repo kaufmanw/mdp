@@ -1,0 +1,32 @@
+Script started on Wed 02 May 2018 02:21:59 PM CDT
+turing$ make policy
+clang -Wall -g -std=gnu99  -c mdp.c
+clang -Wall -g -std=gnu99  -c policy_evaluation.c 
+[1mpolicy_evaluation.c:72:2: [0m[0;1;35mwarning: [0m[1mexpression result unused [-Wunused-value][0m
+        *memcpy(utilities,utilitiesprime,arrSize);
+[0;1;32m        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[0m[1mpolicy_evaluation.c:60:3: [0m[0;1;35mwarning: [0m[1mexpression result unused [-Wunused-value][0m
+  *memcpy(utilitiesprime,utilities,arrSize);
+[0;1;32m  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[0m2 warnings generated.
+clang -Wall -g -std=gnu99  -o policy_iteration policy_iteration.c  \
+mdp.o utilities.o policy_evaluation.o
+turing$ ./policy_iteration .99 .01 4x3.mdp 
+3
+0
+0
+3
+0
+2
+3
+0
+0
+0
+0
+2
+turing$ ./policy_iteration .99 .01 16x4.mdp 
+Segmentation fault
+turing$ exit
+exit
+
+Script done on Wed 02 May 2018 02:22:43 PM CDT

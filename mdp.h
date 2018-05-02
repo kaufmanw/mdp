@@ -12,6 +12,7 @@
 #define __MDP_H__
 
 #include <stdbool.h>
+#include <stdio.h>
 
 typedef struct {
   unsigned int numStates;  /* Total number of possible states */

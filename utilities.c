@@ -24,9 +24,11 @@ calc_eu ( const mdp *  p_mdp, unsigned int state, const double * utilities,
 calc_meu ( const mdp * p_mdp, unsigned int state, const double * utilities,
 	double * meu, unsigned int * action )
 {
+  printf("checking num actions");
   if (p_mdp->numAvailableActions[state] == 0) {
 	return ;
   }
+  printf("checked num actions");
   *action = 0;
   double eu = calc_eu(p_mdp, state, utilities, *action);
   *meu = eu;

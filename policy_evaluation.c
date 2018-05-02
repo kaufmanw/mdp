@@ -63,9 +63,13 @@ void policy_evaluation( const unsigned int* policy, const mdp* p_mdp,
 	delta = 0;
 	for (int state = 0; state < numStates; state++) {
 	  if(!p_mdp->terminal[state]) {
+		printf("calcing eu\n");
+		printf("%d\n", policy[state]);
+		printf("%d\n", state);
 		utilitiesprime[state] = 
 		  p_mdp->rewards[state] + 
 		  gamma * calc_eu(p_mdp, state, utilities, policy[state]);
+		printf("calced eu\n");
 		delta = max(fabs(utilities[state] - utilitiesprime[state]), delta);
 	  }
 	}
