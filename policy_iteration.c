@@ -95,7 +95,7 @@ void policy_iteration ( const mdp* p_mdp, double epsilon, double gamma,
  */
 void randomize_policy( const mdp * p_mdp, unsigned int * policy)
 {
-  srandom(52);
+  srandom(42);
   unsigned int state;
   unsigned int action;
 
@@ -103,11 +103,10 @@ void randomize_policy( const mdp * p_mdp, unsigned int * policy)
   {
 	if (p_mdp->numAvailableActions[state] > 0)
 	{
-	  action = (unsigned int)(random() % (p_mdp->numAvailableActions[state]));
+	  action = (unsigned int) (random() % (p_mdp->numAvailableActions[state]));
 	  policy[state] = p_mdp->actions[state][action];
 	}
   }
-
 }
 
 /*
