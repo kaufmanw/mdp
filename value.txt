@@ -1,4 +1,4 @@
-Script started on Wed 02 May 2018 02:18:00 PM CDT
+Script started on Wed 02 May 2018 02:19:51 PM CDT
 turing$ make value
 clang -Wall -g -std=gnu99  -c mdp.c
 clang -Wall -g -std=gnu99  -o  value_iteration value_iteration.c mdp.o utilities.o
@@ -12,9 +12,9 @@ clang -Wall -g -std=gnu99  -o  value_iteration value_iteration.c mdp.o utilities
   } *memcpy(utilities,utilitiesprime,arrSize);
 [0;1;32m    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 [0m3 warnings generated.
-turing$ make t[Kutilities.[Kt[K
+turing$ make utilities.[K
 clang -Wall -g -std=gnu99  -c utilities.c
-turing$ ./value_iteration .99 1 [K[K.01 4x3.mdp 
+turing$ ./value_iteration .99 .01 4x3.mdp 
 0.776
 0.717
 0.651
@@ -27,7 +27,7 @@ X
 1.000
 -1.000
 0.338
-turing$ ./value_iteration .99 .01 4x3.mdp [1P[1P[1P[1@1[1@6[1@x[1@4[C[C[C[C[C
+turing$ ./value_iteration .99 .01 16x4.mdp 
 -0.328
 X
 X
@@ -92,7 +92,7 @@ X
 X
 1.000
 0.930
-turing$ e[Kexit
+turing$ exit
 exit
 
-Script done on Wed 02 May 2018 02:18:24 PM CDT
+Script done on Wed 02 May 2018 02:20:24 PM CDT
