@@ -1,0 +1,11 @@
+References:
+	Written/online sources used:
+	Pseudocode for the algorithms from AIMA
+	Help obtained:
+	We were unnecessarily worried about something, which Weinman noticed
+	and told us not to be worried about.
+Academic honestly certification:
+	Out initials below confirm that the above list of sources
+	is complete AND that I/we have not talked to anyone else
+ 	(e.g., CSC 261 students) about the solution to this problem
+Initials: WMK, 
