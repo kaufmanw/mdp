@@ -165,12 +165,12 @@ unsigned int rl_agent_action(unsigned int state, double reward)
   double Qstar;
   if (p_mdp->terminal[state]) {
 	for (int i = 0; i < p_mdp->numAvailableActions[state]; i++) {
-	  state_action_value[state][i] = p_mdp->rewards[state];
+	  state_action_value[state][p_mdp->actions[state][i]] = p_mdp->rewards[state];
 	} Qstar = p_mdp->rewards[state];
   }
 	else {
 	  for (int i = 0; i < p_mdp->numAvailableActions[state]; i++)  {
-		double val = state_action_value[state][i];
+		double val = state_action_value[state][p_mdp->actions[state][i]];
 		Qstar = (Qstar < val) ? val : Qstar;
 	  }
 	} if (prevValid) {
@@ -183,19 +183,22 @@ unsigned int rl_agent_action(unsigned int state, double reward)
 	}
 	if (p_mdp->terminal[state]) {
 	  prevValid = false;
+	  return 0;
 	}
 	else {
 	  prevState = state;
 	  prevAction = 0;
-	  double val = exploration_function(state_action_value[state][0],
+	  double val = exploration_function(state_action_value[state][p_mdp->actions[state][0]],
 		 state_action_freq[state][0]);
 	  for (int i = 1; i < p_mdp->numAvailableActions[state]; i++) {
-		double newVal = exploration_function(state_action_value[state][i],
-			state_action_freq[state][i]);
-		prevAction = (val < newVal) ? i : prevAction;
+		double newVal = exploration_function(state_action_value[state]
+			[p_mdp->actions[state][i]],
+			state_action_freq[state][p_mdp->actions[state][i]]);
+		prevAction = (val < newVal) ? p_mdp->actions[state][i] : prevAction;
 		val = (val < newVal) ? newVal : val;
 	  }
 	  prevReward = p_mdp->rewards[state];
+	  prevValid = true;
 	}
 	return prevAction;
   }
