@@ -164,21 +164,22 @@ unsigned int rl_agent_action(unsigned int state, double reward)
 {
   double Qstar;
   if (p_mdp->terminal[state]) {
-	for (int i = 0; i < numAvailableActions[state]; i++) {
+	for (int i = 0; i < p_mdp->numAvailableActions[state]; i++) {
 	  state_action_value[state][i] = p_mdp->rewards[state];
 	} Qstar = p_mdp->rewards[state];
+  }
 	else {
-	  for (int i = 0; i < numAvailableActions[state]; i++)  {
-		val = state_action_value[state][i];
-		Qstar = (Qstar < val) ? val : Qstar
+	  for (int i = 0; i < p_mdp->numAvailableActions[state]; i++)  {
+		double val = state_action_value[state][i];
+		Qstar = (Qstar < val) ? val : Qstar;
 	  }
-	} if prevValid {
+	} if (prevValid) {
 	  state_action_freq[prevState][prevAction]++;
 	  state_action_value[prevState][prevAction] = 
 		state_action_value[prevState][prevAction] + 
 		updateWeight(state_action_freq[prevState][prevAction]) * ( 
-		p_mdp->reward[state] + gamma * Qstar - 
-	   state_action_value[prevState][prevAction])	
+		p_mdp->rewards[state] + gamma * Qstar - 
+	   state_action_value[prevState][prevAction]);	
 	}
 	if (p_mdp->terminal[state]) {
 	  prevValid = false;
@@ -186,16 +187,17 @@ unsigned int rl_agent_action(unsigned int state, double reward)
 	else {
 	  prevState = state;
 	  prevAction = 0;
-	  val = exploration_function(state_action_value[state][0],
-		 state_action_freq[state][0]) 
+	  double val = exploration_function(state_action_value[state][0],
+		 state_action_freq[state][0]);
 	  for (int i = 1; i < p_mdp->numAvailableActions[state]; i++) {
-		newVal = exploration_function(state_action_value[state][i],
+		double newVal = exploration_function(state_action_value[state][i],
 			state_action_freq[state][i]);
 		prevAction = (val < newVal) ? i : prevAction;
 		val = (val < newVal) ? newVal : val;
 	  }
 	  prevReward = p_mdp->rewards[state];
 	}
+	return prevAction;
   }
 
 
