@@ -171,12 +171,9 @@ unsigned int rl_agent_action(unsigned int state, double reward)
   }
   else {
 	Qstar = max_value(p_mdp->numAvailableActions[state], p_mdp->actions[state], state_action_value[state]);
-	printf("%lf\n", Qstar);
   } 
   if (prevValid) {
-	//printf("prevvalid\n");
 	state_action_freq[prevState][prevAction] = state_action_freq[prevState][prevAction] + 1;
-	//printf("freq is %lf\n", state_action_freq[prevState][prevAction]);
 	state_action_value[prevState][prevAction] = 
 	  state_action_value[prevState][prevAction] + 
 	  updateWeight(state_action_freq[prevState][prevAction]) * 
@@ -185,7 +182,6 @@ unsigned int rl_agent_action(unsigned int state, double reward)
 	   state_action_value[prevState][prevAction]
 	  );	
   }
-  //printf("updated to %lf\n", state_action_value[prevState][prevAction]);
   if (p_mdp->terminal[state]) {
 	prevValid = false;
 	return 0;
@@ -202,11 +198,11 @@ unsigned int rl_agent_action(unsigned int state, double reward)
 		  state_action_freq[state][p_mdp->actions[state][i]]);
 	  prevAction = (val < newVal) ? p_mdp->actions[state][i] : prevAction;
 	  val = (val < newVal) ? newVal : val;
+	  prevAction = (val ==
 	}
 	prevReward = p_mdp->rewards[state];
 	prevValid = true;
   }
-  //printf("prevaction is %d\n", prevAction);
   return prevAction;
 }
 
