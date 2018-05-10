@@ -187,9 +187,9 @@ unsigned int rl_agent_action(unsigned int state, double reward)
 	}
 	else {
 	  prevState = state;
-	  prevAction = 0;
-	  double val = exploration_function(state_action_value[state][p_mdp->actions[state][0]],
-		 state_action_freq[state][0]);
+	  prevAction = p_mdp->actions[state][0];
+	  double val = exploration_function(state_action_value[state][p_mdp->actions[state][prevAction]],
+		 state_action_freq[state][prevAction]);
 	  for (int i = 1; i < p_mdp->numAvailableActions[state]; i++) {
 		double newVal = exploration_function(state_action_value[state]
 			[p_mdp->actions[state][i]],
