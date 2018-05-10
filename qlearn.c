@@ -3,6 +3,7 @@
 #include <errno.h>
 #include <string.h>
 #include <stdbool.h>
+#include <time.h>
 
 #include "mdp.h"
 #include "environment.h"
@@ -163,6 +164,8 @@ double exploration_function( double u, double n )
 unsigned int rl_agent_action(unsigned int state, double reward)
 {
   double Qstar;
+  srand(time(NULL));
+  double randVal;
   if (p_mdp->terminal[state]) {
 	for (int i = 0; i < p_mdp->numAvailableActions[state]; i++) {
 	  state_action_value[state][p_mdp->actions[state][i]] = reward;
@@ -196,19 +199,24 @@ unsigned int rl_agent_action(unsigned int state, double reward)
 	  double newVal = exploration_function(
 		  state_action_value[state][p_mdp->actions[state][i]],
 		  state_action_freq[state][p_mdp->actions[state][i]]);
-	  prevAction = (val < newVal) ? p_mdp->actions[state][i] : prevAction;
-	  val = (val < newVal) ? newVal : val;
-	  prevAction = (val ==
+	  if (val == newVal) {
+		randVal = rand() / RAND_MAX;
+		val = (randVal > .5) ? val : newVal;
+		prevAction = (randVal > .5) ? prevAction : p_mdp->actions[state][i]; 
+	  } else {
+		prevAction = (val < newVal) ? p_mdp->actions[state][i] : prevAction;
+		val = (val < newVal) ? newVal : val;
+	  }
+	  prevReward = reward;
+	  prevValid = true;
 	}
-	prevReward = p_mdp->rewards[state];
-	prevValid = true;
+	return prevAction;
   }
-  return prevAction;
 }
 
 
 
-/*
+  /*
 Usage: qlearn gamma reward attempts mdpfile trials
 
 Runs Q-Learning-Agent in an environment for the given number of
@@ -217,124 +225,124 @@ estimate when the number of state-action experiences is less than
 attempts.
 
 Author: Jerod Weinman
- */
+   */
   int
-main (int argc, char* argv[])
-{
-  // Loop variables for later
-  unsigned int state,action;
+	main (int argc, char* argv[])
+	{
+	  // Loop variables for later
+	  unsigned int state,action;
 
-  // Read and process configurations
-  double gamma, reward, attempts;
-  unsigned int trials;
+	  // Read and process configurations
+	  double gamma, reward, attempts;
+	  unsigned int trials;
 
-  process_args (argc,argv, &gamma, &reward, &attempts, &trials);
+	  process_args (argc,argv, &gamma, &reward, &attempts, &trials);
 
-  // Initialize environment
-  environment_setup (argv[4]);
-
-
-  // Initialize agent
-  qlearn_initialize (environment_get_mdp(), gamma, reward, attempts );
+	  // Initialize environment
+	  environment_setup (argv[4]);
 
 
-  // Run Q-Learning-Agent!
-  environment_run (trials);
-
-  // Print values
-  printf("Q[s,a]\n");
-  for ( state=0 ; state < p_mdp->numStates ; state++)
-  {
-	for ( action=0 ; action < p_mdp->numActions ; action++)
-	  printf ("%1.3f\t",state_action_value[state][action]);
-	printf ("\n");
-  }
-
-  // Print utilities
-  printf("\nU[s]\n");
-  for ( state = 0; state < p_mdp->numStates ; state++) // For each state
-
-	// if there are any actions in the state
-	if (p_mdp->numAvailableActions[state] > 0)
-	  // print the maximum Q-value (which is the utility)
-	  printf ("%f\n", max_value (p_mdp->numAvailableActions[state],
-			p_mdp->actions[state],
-			state_action_value[state] ) );
-  // Otherwise, if the state is terminal
-	else if (p_mdp->terminal[state])
-	  // Print the value of the first action (which is the reward)
-	  printf ("%f\n", state_action_value[state][0] );
-	else
-	  // Otherwise, just print X
-	  printf ("X\n");
+	  // Initialize agent
+	  qlearn_initialize (environment_get_mdp(), gamma, reward, attempts );
 
 
-  // Print policy
-  printf ("\npolicy[s]\n");
-  for ( state = 0; state < p_mdp->numStates ; state++)
-	if (p_mdp->numAvailableActions[state] > 0)
-	  printf ("%u\n", arg_max_value ( p_mdp->numAvailableActions[state],
-			p_mdp->actions[state],
-			state_action_value[state] ) );
-	else
-	  printf ("X\n");
+	  // Run Q-Learning-Agent!
+	  environment_run (trials);
 
-  return 0;
-} // main
+	  // Print values
+	  printf("Q[s,a]\n");
+	  for ( state=0 ; state < p_mdp->numStates ; state++)
+	  {
+		for ( action=0 ; action < p_mdp->numActions ; action++)
+		  printf ("%1.3f\t",state_action_value[state][action]);
+		printf ("\n");
+	  }
+
+	  // Print utilities
+	  printf("\nU[s]\n");
+	  for ( state = 0; state < p_mdp->numStates ; state++) // For each state
+
+		// if there are any actions in the state
+		if (p_mdp->numAvailableActions[state] > 0)
+		  // print the maximum Q-value (which is the utility)
+		  printf ("%f\n", max_value (p_mdp->numAvailableActions[state],
+				p_mdp->actions[state],
+				state_action_value[state] ) );
+	  // Otherwise, if the state is terminal
+		else if (p_mdp->terminal[state])
+		  // Print the value of the first action (which is the reward)
+		  printf ("%f\n", state_action_value[state][0] );
+		else
+		  // Otherwise, just print X
+		  printf ("X\n");
 
 
-/* Process user command line input in one handy, easy to read function */
+	  // Print policy
+	  printf ("\npolicy[s]\n");
+	  for ( state = 0; state < p_mdp->numStates ; state++)
+		if (p_mdp->numAvailableActions[state] > 0)
+		  printf ("%u\n", arg_max_value ( p_mdp->numAvailableActions[state],
+				p_mdp->actions[state],
+				state_action_value[state] ) );
+		else
+		  printf ("X\n");
+
+	  return 0;
+	} // main
+
+
+  /* Process user command line input in one handy, easy to read function */
   void
-process_args (int argc, char * argv[], 
-	double * gamma, double * reward,  double * attempts, 
-	unsigned int * trials)
-{
-  if (argc != 6)
-  {
-	fprintf (stderr,
-		"Usage: %s gamma reward attempts mdpfile trials\n", argv[0]);
-	exit (EXIT_FAILURE);
-  }
+	process_args (int argc, char * argv[], 
+		double * gamma, double * reward,  double * attempts, 
+		unsigned int * trials)
+	{
+	  if (argc != 6)
+	  {
+		fprintf (stderr,
+			"Usage: %s gamma reward attempts mdpfile trials\n", argv[0]);
+		exit (EXIT_FAILURE);
+	  }
 
-  char * endptr; // String End Location for number parsing
+	  char * endptr; // String End Location for number parsing
 
-  // Read gamma, the discount factor, as a double
-  *gamma = strtod (argv[1], &endptr);
+	  // Read gamma, the discount factor, as a double
+	  *gamma = strtod (argv[1], &endptr);
 
-  if ( (endptr - argv[1])/sizeof(char) < strlen (argv[1]) )
-  {
-	fprintf (stderr, "%s: Illegal non-numeric value in argument gamma=%s\n",
-		argv[0], argv[1]);
-	exit (EXIT_FAILURE);
-  }
+	  if ( (endptr - argv[1])/sizeof(char) < strlen (argv[1]) )
+	  {
+		fprintf (stderr, "%s: Illegal non-numeric value in argument gamma=%s\n",
+			argv[0], argv[1]);
+		exit (EXIT_FAILURE);
+	  }
 
-  // Read optimistic reward as a double
-  *reward = strtod (argv[2], &endptr);
+	  // Read optimistic reward as a double
+	  *reward = strtod (argv[2], &endptr);
 
-  if ( (endptr - argv[2])/sizeof(char) < strlen (argv[2]) )
-  {
-	fprintf (stderr, "%s: Illegal non-numeric value in argument reward=%s\n",
-		argv[0], argv[2]);
-	exit (EXIT_FAILURE);
-  }
+	  if ( (endptr - argv[2])/sizeof(char) < strlen (argv[2]) )
+	  {
+		fprintf (stderr, "%s: Illegal non-numeric value in argument reward=%s\n",
+			argv[0], argv[2]);
+		exit (EXIT_FAILURE);
+	  }
 
-  // Read number of attempts to require as a double
-  *attempts = strtod (argv[3], &endptr);
+	  // Read number of attempts to require as a double
+	  *attempts = strtod (argv[3], &endptr);
 
-  if ( (endptr - argv[3])/sizeof(char) < strlen (argv[3]) )
-  {
-	fprintf (stderr, "%s: Illegal non-numeric value in argument attempts=%s\n",
-		argv[0], argv[3]);
-	exit (EXIT_FAILURE);
-  }
+	  if ( (endptr - argv[3])/sizeof(char) < strlen (argv[3]) )
+	  {
+		fprintf (stderr, "%s: Illegal non-numeric value in argument attempts=%s\n",
+			argv[0], argv[3]);
+		exit (EXIT_FAILURE);
+	  }
 
-  // Read trials, number of times to run as an unsigned integer
-  *trials = (unsigned int)strtol(argv[5], &endptr, 10);
+	  // Read trials, number of times to run as an unsigned integer
+	  *trials = (unsigned int)strtol(argv[5], &endptr, 10);
 
-  if ( (endptr - argv[5])/sizeof(char) < strlen (argv[5]) )
-  {
-	fprintf (stderr, "%s: Illegal non-numeric value in argument trials=%s\n",
-		argv[0], argv[5]);
-	exit (EXIT_FAILURE);
-  }
-} // process_args
+	  if ( (endptr - argv[5])/sizeof(char) < strlen (argv[5]) )
+	  {
+		fprintf (stderr, "%s: Illegal non-numeric value in argument trials=%s\n",
+			argv[0], argv[5]);
+		exit (EXIT_FAILURE);
+	  }
+	} // process_args
