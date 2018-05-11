@@ -1,0 +1,88 @@
+Script started on Fri 11 May 2018 11:02:40 AM CDT
+@turing:mdp$ make td
+clang -Wall -g -std=gnu99  -c mdp.c
+clang -Wall -g -std=gnu99  -c environment.c
+clang -Wall -g -std=gnu99  -o td td.c \
+mdp.o environment.o
+@turing:mdp$ ./td 1 4x3.mdp 10000000 < 4x3.policy
+0.812
+0.762
+0.705
+0.868
+X
+0.655
+0.918
+0.659
+0.000
+1.000
+-1.000
+0.000
+@turing:mdp$ ./td 1 16x4.mdp 10000000 < 16x4.policy
+-0.231
+X
+X
+0.000
+-0.181
+X
+0.000
+0.000
+-0.131
+-0.080
+-0.036
+X
+-0.091
+-0.036
+0.020
+0.077
+X
+X
+X
+0.134
+0.340
+0.290
+0.240
+0.184
+0.396
+X
+X
+X
+0.446
+X
+X
+0.000
+0.496
+0.559
+0.609
+0.578
+0.446
+X
+0.669
+0.624
+X
+0.675
+0.724
+0.669
+0.000
+X
+0.788
+X
+0.944
+0.894
+0.838
+0.000
+1.000
+X
+X
+0.000
+X
+X
+X
+0.000
+0.000
+X
+0.000
+0.000
+@turing:mdp$ exit
+exit
+
+Script done on Fri 11 May 2018 11:04:22 AM CDT
